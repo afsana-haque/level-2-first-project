@@ -83,6 +83,12 @@ const studentSchema = new Schema<Student>({
     unique: true
 
   },
+  user: {
+    type: Schema.Types.ObjectId,
+    required: [true, 'User id is required'],
+    unique: true,
+    ref: 'User',
+  },
   name: {
     type: userNameSchema,
     required: [true, " name is required"],
@@ -134,11 +140,29 @@ const studentSchema = new Schema<Student>({
     required: [true, " localGuardian is required"]
   },
   profileImg: { type: String },
-  isActive: {
-    type: String,
-    enum: ['active', 'blocked'],
-    default: "active"
+  isDeleted: {
+    type: Boolean,
+    default: false,
   },
+},
+{
+  toJSON: {
+    virtuals: true,
+  },
+}
+);
+
+studentSchema.pre('aggregate', function (next) {
+  this.pipeline().unshift({ $match: { isDeleted: { $ne: true } } });
+  next();
 });
+
+//creating a custom static method
+studentSchema.statics.isUserExists = async function (id: string) {
+  const existingUser = await StudentModel.findOne({ id });
+  return existingUser;
+};
+
+
 
 export const StudentModel = model<Student>('Student', studentSchema);
