@@ -5,20 +5,10 @@ import httpStatus from 'http-status';
 import catchAsync from '../../utils/catchAsync';
 
 
-// const catchAsync = (fn: RequestHandler) => {
-//   return (req: Request, res: Response, next: NextFunction ) => {
-//   Promise.resolve(fn(req, res, next)).catch(err => next(err))
-//   }
-// };
-
 
 const getAllStudents = catchAsync(async (req, res, next) => {
     const result = await StudentServices.getAllStudentsFromDB();
-    // res.status(200).json({
-    //   success: true,
-    //   message: 'Students are retrieved successfully',
-    //   data: result,
-    // });
+
     sendResponse(res, {
       statusCode: httpStatus.OK,
       success: true,
@@ -28,8 +18,6 @@ const getAllStudents = catchAsync(async (req, res, next) => {
 
 }
 )
-
-
 
 const getSingleStudent = catchAsync( async (req, res) => {
 
